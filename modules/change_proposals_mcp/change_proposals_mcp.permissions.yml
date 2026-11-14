@@ -1,0 +1,3 @@
+'propose changes through mcp':
+  title: 'Propose content changes through MCP'
+  description: 'Lets an MCP session call the propose_* tools. The account also needs "create change proposals".'

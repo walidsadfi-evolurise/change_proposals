@@ -1,0 +1,35 @@
+{
+    "name": "drupal/change_proposals",
+    "description": "Content changes proposed by AI agents, integrations or contributors become proposals an editor reviews, with a field-by-field diff; approval applies them as a new revision. MCP tools included.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/change_proposals",
+    "authors": [
+        {
+            "name": "Walid Sadfi",
+            "email": "walid.sadfi@evolurise.com",
+            "homepage": "https://walidsadfi.com",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/change_proposals",
+        "source": "https://git.drupalcode.org/project/change_proposals"
+    },
+    "require": {
+        "php": ">=8.3",
+        "drupal/core": "^10.3 || ^11"
+    },
+    "suggest": {
+        "drupal/mcp_server": "^2.0@beta — enable the change_proposals_mcp submodule to let MCP agents propose changes.",
+        "drush/drush": "^12.4 || ^13 for the change-proposals:* commands."
+    },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\change_proposals\\": "src/"
+        }
+    },
+    "extra": {
+        "installer-name": "change_proposals"
+    }
+}

@@ -1,0 +1,5 @@
+entity.change_proposal.collection:
+  title: 'Change proposals'
+  route_name: entity.change_proposal.collection
+  base_route: system.admin_content
+  weight: 20

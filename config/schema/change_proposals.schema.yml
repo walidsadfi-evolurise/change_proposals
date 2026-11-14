@@ -1,0 +1,29 @@
+change_proposals.settings:
+  type: config_object
+  label: 'Change proposals settings'
+  mapping:
+    entity_types:
+      type: sequence
+      label: 'Entity types that accept proposals'
+      sequence:
+        type: string
+    blocked_fields:
+      type: sequence
+      label: 'Fields that can never be proposed'
+      sequence:
+        type: string
+    expire_days:
+      type: integer
+      label: 'Days before an unreviewed proposal expires'
+    notify_email:
+      type: string
+      label: 'Reviewer email(s)'
+    notify_on_new:
+      type: boolean
+      label: 'Email reviewers on new proposals'
+    webhook_url:
+      type: string
+      label: 'Webhook URL'
+    webhook_token:
+      type: string
+      label: 'Webhook bearer token'

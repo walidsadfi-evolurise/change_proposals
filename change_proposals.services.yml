@@ -1,0 +1,22 @@
+services:
+  change_proposals.manager:
+    class: Drupal\change_proposals\ProposalManager
+    arguments:
+      - '@entity_type.manager'
+      - '@entity_field.manager'
+      - '@entity_type.bundle.info'
+      - '@config.factory'
+      - '@module_handler'
+      - '@datetime.time'
+      - '@logger.channel.change_proposals'
+      - '@plugin.manager.mail'
+      - '@language_manager'
+      - '@http_client'
+      - '@change_proposals.differ'
+  change_proposals.differ:
+    class: Drupal\change_proposals\ProposalDiffer
+  logger.channel.change_proposals:
+    parent: logger.channel_base
+    arguments: ['change_proposals']
+  Drupal\change_proposals\ProposalManager: '@change_proposals.manager'
+  Drupal\change_proposals\ProposalDiffer: '@change_proposals.differ'

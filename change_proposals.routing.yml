@@ -1,0 +1,40 @@
+entity.change_proposal.collection:
+  path: '/admin/content/change-proposals'
+  defaults:
+    _entity_list: 'change_proposal'
+    _title: 'Change proposals'
+  requirements:
+    _permission: 'review change proposals+view own change proposals'
+  options:
+    _admin_route: TRUE
+
+entity.change_proposal.canonical:
+  path: '/admin/content/change-proposals/{change_proposal}'
+  defaults:
+    _controller: '\Drupal\change_proposals\Controller\ProposalController::review'
+    _title_callback: '\Drupal\change_proposals\Controller\ProposalController::title'
+  requirements:
+    _entity_access: 'change_proposal.view'
+  options:
+    _admin_route: TRUE
+    parameters:
+      change_proposal:
+        type: entity:change_proposal
+
+entity.change_proposal.delete_form:
+  path: '/admin/content/change-proposals/{change_proposal}/delete'
+  defaults:
+    _entity_form: 'change_proposal.delete'
+    _title: 'Delete proposal'
+  requirements:
+    _entity_access: 'change_proposal.delete'
+  options:
+    _admin_route: TRUE
+
+change_proposals.settings:
+  path: '/admin/config/content/change-proposals'
+  defaults:
+    _form: '\Drupal\change_proposals\Form\SettingsForm'
+    _title: 'Change proposals'
+  requirements:
+    _permission: 'administer change proposals'

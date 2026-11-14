@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Install hooks.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_requirements().
+ */
+function change_proposals_requirements(string $phase): array {
+  $requirements = [];
+  if ($phase === 'runtime') {
+    $pending = \Drupal::entityQuery('change_proposal')->accessCheck(FALSE)->condition('status', 'pending')->count()->execute();
+    $requirements['change_proposals_pending'] = [
+      'title' => t('Change proposals'),
+      'value' => \Drupal::translation()->formatPlural((int) $pending, '1 proposal awaiting review', '@count proposals awaiting review'),
+      'severity' => $pending ? REQUIREMENT_INFO : REQUIREMENT_OK,
+      'description' => \Drupal\Core\Link::createFromRoute(t('Review proposals'), 'entity.change_proposal.collection')->toString(),
+    ];
+  }
+  return $requirements;
+}

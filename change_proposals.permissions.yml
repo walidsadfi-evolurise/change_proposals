@@ -1,0 +1,12 @@
+'create change proposals':
+  title: 'Create change proposals'
+  description: 'Propose a change to content the account can view. The change is not applied until a reviewer approves it.'
+'view own change proposals':
+  title: 'View own change proposals'
+'review change proposals':
+  title: 'Review change proposals'
+  description: 'See every proposal, approve (applies the change with the reviewer as revision author) or reject.'
+  restrict access: true
+'administer change proposals':
+  title: 'Administer change proposals'
+  restrict access: true

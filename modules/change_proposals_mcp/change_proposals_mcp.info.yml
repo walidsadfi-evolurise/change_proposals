@@ -1,0 +1,9 @@
+name: 'Change Proposals MCP'
+type: module
+description: 'MCP tools so AI agents can propose content changes (never apply them): describe a content type, propose an update or a creation, follow the decision.'
+package: 'AI'
+core_version_requirement: ^10.3 || ^11
+php: 8.3
+dependencies:
+  - change_proposals:change_proposals
+  - mcp_server:mcp_server

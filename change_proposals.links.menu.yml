@@ -1,0 +1,5 @@
+change_proposals.settings:
+  title: 'Change proposals'
+  description: 'Expiry, notifications, fields that may never be proposed.'
+  parent: system.admin_config_content
+  route_name: change_proposals.settings

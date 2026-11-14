@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Change Proposals: proposed content changes reviewed before they are applied.
+ */
+
+declare(strict_types=1);
+
+use Drupal\change_proposals\ChangeProposalInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function change_proposals_help(string $route_name, RouteMatchInterface $route_match): ?string {
+  if ($route_name === 'help.page.change_proposals') {
+    return '<p>' . t('A proposal is a set of field values an account would like applied to a piece of content (or a new piece of content). Reviewers see the current value next to the proposed one and approve, which saves a new revision authored by the reviewer, or reject with a note. Proposals arrive through the UI, JSON:API, Drush or, with the MCP submodule, from AI agents.') . '</p>';
+  }
+  return NULL;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function change_proposals_cron(): void {
+  \Drupal::service('change_proposals.manager')->expire();
+}
+
+/**
+ * Implements hook_mail().
+ */
+function change_proposals_mail(string $key, array &$message, array $params): void {
+  if ($key === 'new_proposal') {
+    $message['subject'] = $params['subject'];
+    $message['body'][] = $params['body'];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for change_proposal.
+ *
+ * Every channel (UI, JSON:API, Drush, MCP) goes through the same checks.
+ */
+function change_proposals_change_proposal_presave(ChangeProposalInterface $proposal): void {
+  if ($proposal->isNew()) {
+    \Drupal::service('change_proposals.manager')->prepare($proposal);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for change_proposal.
+ */
+function change_proposals_change_proposal_insert(ChangeProposalInterface $proposal): void {
+  \Drupal::service('change_proposals.manager')->afterCreate($proposal);
+}

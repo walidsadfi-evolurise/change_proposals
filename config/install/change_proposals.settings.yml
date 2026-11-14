@@ -1,0 +1,23 @@
+entity_types:
+  - node
+blocked_fields:
+  - uid
+  - revision_uid
+  - revision_log
+  - revision_timestamp
+  - created
+  - changed
+  - path
+  - nid
+  - vid
+  - uuid
+  - type
+  - langcode
+  - default_langcode
+  - revision_default
+  - revision_translation_affected
+expire_days: 14
+notify_email: ''
+notify_on_new: true
+webhook_url: ''
+webhook_token: ''
