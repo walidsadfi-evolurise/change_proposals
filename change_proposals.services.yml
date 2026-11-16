@@ -13,6 +13,7 @@ services:
       - '@language_manager'
       - '@http_client'
       - '@change_proposals.differ'
+      - '@account_switcher'
   change_proposals.differ:
     class: Drupal\change_proposals\ProposalDiffer
   logger.channel.change_proposals:

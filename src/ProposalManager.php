@@ -19,6 +19,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\user\EntityOwnerInterface;
 use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerInterface;
@@ -44,6 +45,7 @@ class ProposalManager {
     protected LanguageManagerInterface $languageManager,
     protected ClientInterface $httpClient,
     protected ProposalDiffer $differ,
+    protected AccountSwitcherInterface $accountSwitcher,
   ) {}
 
   /**
@@ -186,7 +188,7 @@ class ProposalManager {
     }
 
     $candidate = $this->buildCandidate($proposal);
-    $messages = $this->violations($candidate, array_keys($payload));
+    $messages = $this->violations($candidate, array_keys($payload), $account);
     if ($messages) {
       throw new ProposalException('invalid', 'The proposed values do not validate.', $messages);
     }
@@ -287,7 +289,7 @@ class ProposalManager {
       ]);
       throw $e;
     }
-    $messages = $this->violations($candidate, array_keys($proposal->getPayload()));
+    $messages = $this->violations($candidate, array_keys($proposal->getPayload()), $reviewer);
     if ($messages) {
       $this->decide($proposal, ChangeProposalInterface::FAILED, $reviewer, $note, [
         'error' => 'invalid',
@@ -403,14 +405,24 @@ class ProposalManager {
   /**
    * Validation messages relevant to the proposed fields.
    *
-   * Entity-level violations are always included.
+   * Entity-level violations are always included. Validation runs as the given
+   * account, because constraints such as the text formats a user may use
+   * depend on who is acting, not on who happens to be the current user (a
+   * Drush command, a queue worker or an MCP session acting for someone else).
    *
    * @return string[]
    *   Human-readable messages, prefixed with the field label.
    */
-  protected function violations(ContentEntityInterface $candidate, array $fields): array {
+  protected function violations(ContentEntityInterface $candidate, array $fields, AccountInterface $as): array {
+    $this->accountSwitcher->switchTo($as);
+    try {
+      $violations = $candidate->validate();
+    }
+    finally {
+      $this->accountSwitcher->switchBack();
+    }
     $messages = [];
-    foreach ($candidate->validate() as $violation) {
+    foreach ($violations as $violation) {
       $path = (string) $violation->getPropertyPath();
       $root = explode('.', $path)[0];
       if ($path !== '' && !in_array($root, $fields, TRUE) && !$candidate->isNew()) {

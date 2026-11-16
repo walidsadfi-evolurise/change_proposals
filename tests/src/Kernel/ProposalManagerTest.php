@@ -79,8 +79,18 @@ final class ProposalManagerTest extends KernelTestBase {
 
     // UserCreationTrait creates uid 1 first; make sure neither test user is it.
     $this->createUser();
-    $this->agent = $this->createUser(['access content', 'create change proposals', 'view own change proposals'], 'agent');
-    $this->reviewer = $this->createUser(['access content', 'review change proposals', 'bypass node access'], 'reviewer');
+    $this->agent = $this->createUser([
+      'access content',
+      'create change proposals',
+      'view own change proposals',
+      'use text format raw',
+    ], 'agent');
+    $this->reviewer = $this->createUser([
+      'access content',
+      'review change proposals',
+      'bypass node access',
+      'use text format raw',
+    ], 'reviewer');
     $this->manager = $this->container->get('change_proposals.manager');
   }
 
@@ -211,6 +221,29 @@ final class ProposalManagerTest extends KernelTestBase {
       $this->assertSame('invalid', $e->errorCode);
       $this->assertStringStartsWith('title', $e->messages[0]);
     }
+  }
+
+  /**
+   * Values are validated as the proposer, not as the current user.
+   *
+   * A proposer who may not use a text format cannot slip content in that
+   * format through a proposal, even when the code runs as another user.
+   */
+  public function testValidatedAsProposer(): void {
+    $node = $this->article();
+    $limited = $this->createUser(['access content', 'create change proposals']);
+    $this->setCurrentUser($this->reviewer);
+    try {
+      $this->manager->propose('node', (int) $node->id(), NULL, [
+        'body' => ['value' => '<script>x</script>', 'format' => 'raw'],
+      ], $limited);
+      $this->fail('a text format the proposer may not use was accepted');
+    }
+    catch (ProposalException $e) {
+      $this->assertSame('invalid', $e->errorCode);
+      $this->assertStringStartsWith('body', $e->messages[0]);
+    }
+    $this->assertSame((int) $this->reviewer->id(), (int) $this->container->get('current_user')->id(), 'current user restored');
   }
 
   /**
