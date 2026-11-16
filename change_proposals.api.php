@@ -37,7 +37,7 @@ function hook_change_proposals_decided(ChangeProposalInterface $proposal): void 
  * Change the payload POSTed to the webhook.
  *
  * @param array $body
- *   event, text, proposal.
+ *   The body: event, text and proposal.
  * @param \Drupal\change_proposals\ChangeProposalInterface $proposal
  *   The proposal.
  */

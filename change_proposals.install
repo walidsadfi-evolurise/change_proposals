@@ -7,6 +7,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Link;
+
 /**
  * Implements hook_requirements().
  */
@@ -18,7 +20,7 @@ function change_proposals_requirements(string $phase): array {
       'title' => t('Change proposals'),
       'value' => \Drupal::translation()->formatPlural((int) $pending, '1 proposal awaiting review', '@count proposals awaiting review'),
       'severity' => $pending ? REQUIREMENT_INFO : REQUIREMENT_OK,
-      'description' => \Drupal\Core\Link::createFromRoute(t('Review proposals'), 'entity.change_proposal.collection')->toString(),
+      'description' => Link::createFromRoute(t('Review proposals'), 'entity.change_proposal.collection')->toString(),
     ];
   }
   return $requirements;

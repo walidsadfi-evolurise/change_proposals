@@ -256,6 +256,7 @@ class ProposalManager {
    * Field-by-field comparison for reviewers.
    *
    * @return list<array{field: string, label: string, current: string, proposed: string, changed: bool}>
+   *   One row per proposed field.
    */
   public function diff(ChangeProposalInterface $proposal): array {
     $current = $proposal->getOperation() === 'update' ? $proposal->getTarget() : NULL;
@@ -280,12 +281,18 @@ class ProposalManager {
       $candidate = $this->buildCandidate($proposal);
     }
     catch (ProposalException $e) {
-      $this->decide($proposal, ChangeProposalInterface::FAILED, $reviewer, $note, ['error' => $e->errorCode, 'messages' => [$e->getMessage()]]);
+      $this->decide($proposal, ChangeProposalInterface::FAILED, $reviewer, $note, [
+        'error' => $e->errorCode,
+        'messages' => [$e->getMessage()],
+      ]);
       throw $e;
     }
     $messages = $this->violations($candidate, array_keys($proposal->getPayload()));
     if ($messages) {
-      $this->decide($proposal, ChangeProposalInterface::FAILED, $reviewer, $note, ['error' => 'invalid', 'messages' => $messages]);
+      $this->decide($proposal, ChangeProposalInterface::FAILED, $reviewer, $note, [
+        'error' => 'invalid',
+        'messages' => $messages,
+      ]);
       throw new ProposalException('invalid', 'The proposal no longer validates against the current content.', $messages);
     }
     if ($candidate instanceof RevisionableInterface && $candidate->getEntityType()->isRevisionable()) {
@@ -348,6 +355,7 @@ class ProposalManager {
    * Pending proposals, newest first.
    *
    * @return \Drupal\change_proposals\ChangeProposalInterface[]
+   *   The pending proposals, optionally only those of one owner.
    */
   public function pending(?AccountInterface $owner = NULL, int $limit = 50): array {
     $storage = $this->entityTypeManager->getStorage('change_proposal');
@@ -369,7 +377,11 @@ class ProposalManager {
       ->set('decision_note', $note)
       ->set('result', $result)
       ->save();
-    $this->logger->notice('Proposal #@id @status by @user', ['@id' => $proposal->id(), '@status' => $status, '@user' => $reviewer->getAccountName()]);
+    $this->logger->notice('Proposal #@id @status by @user', [
+      '@id' => $proposal->id(),
+      '@status' => $status,
+      '@user' => $reviewer->getAccountName(),
+    ]);
     $this->moduleHandler->invokeAll('change_proposals_decided', [$proposal]);
     $this->webhook($proposal, 'proposal.' . $status);
   }
@@ -389,9 +401,12 @@ class ProposalManager {
   }
 
   /**
-   * Validation messages relevant to the proposed fields (and entity-level ones).
+   * Validation messages relevant to the proposed fields.
+   *
+   * Entity-level violations are always included.
    *
    * @return string[]
+   *   Human-readable messages, prefixed with the field label.
    */
   protected function violations(ContentEntityInterface $candidate, array $fields): array {
     $messages = [];
@@ -454,7 +469,9 @@ class ProposalManager {
   }
 
   /**
-   * POST the proposal to the configured webhook (Slack-compatible "text" + full payload).
+   * POSTs the proposal to the configured webhook.
+   *
+   * The body carries a Slack-compatible "text" plus the full payload.
    */
   protected function webhook(ChangeProposalInterface $proposal, string $event): void {
     $s = $this->settings();
@@ -475,7 +492,10 @@ class ProposalManager {
       $this->httpClient->request('POST', $s['webhook_url'], ['json' => $body, 'headers' => $headers, 'timeout' => 5]);
     }
     catch (\Throwable $e) {
-      $this->logger->warning('Webhook failed for proposal #@id: @m', ['@id' => $proposal->id(), '@m' => $e->getMessage()]);
+      $this->logger->warning('Webhook failed for proposal #@id: @m', [
+        '@id' => $proposal->id(),
+        '@m' => $e->getMessage(),
+      ]);
     }
   }
 

@@ -16,13 +16,14 @@ class ProposalDiffer {
    * One row per proposed field.
    *
    * @param array $payload
-   *   field => proposed value (raw).
+   *   Proposed raw values keyed by field name.
    * @param \Drupal\Core\Entity\ContentEntityInterface|null $current
    *   The target as it is now (NULL for a creation).
    * @param \Drupal\Core\Entity\ContentEntityInterface|null $candidate
    *   The target with the payload applied (NULL when it could not be built).
    *
    * @return list<array{field: string, label: string, current: string, proposed: string, changed: bool}>
+   *   Rows with the field label and its current and proposed values.
    */
   public function diff(array $payload, ?ContentEntityInterface $current, ?ContentEntityInterface $candidate): array {
     $rows = [];

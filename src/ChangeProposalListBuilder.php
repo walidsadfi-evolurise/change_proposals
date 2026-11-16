@@ -16,14 +16,29 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * /admin/content/change-proposals.
+ * Lists proposals at /admin/content/change-proposals.
  */
 class ChangeProposalListBuilder extends EntityListBuilder {
 
+  /**
+   * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
   protected DateFormatterInterface $dateFormatter;
 
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
   protected AccountInterface $currentUser;
 
+  /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
   protected RequestStack $requestStack;
 
   /**

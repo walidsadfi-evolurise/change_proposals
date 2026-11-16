@@ -21,9 +21,16 @@ use Mcp\Server\ClientGateway;
     'properties' => [
       'entity_type' => ['type' => 'string', 'description' => 'Default "node".'],
       'id' => ['type' => 'integer', 'description' => 'Entity id to update.'],
-      'values' => ['type' => 'object', 'description' => 'field_name => new value. Only the fields to change.', 'additionalProperties' => TRUE],
+      'values' => [
+        'type' => 'object',
+        'description' => 'field_name => new value. Only the fields to change.',
+        'additionalProperties' => TRUE,
+      ],
       'reason' => ['type' => 'string', 'description' => 'Why this change; shown to the reviewer.'],
-      'langcode' => ['type' => 'string', 'description' => 'Translation to change, e.g. "fr". Default: original language.'],
+      'langcode' => [
+        'type' => 'string',
+        'description' => 'Translation to change, e.g. "fr". Default: original language.',
+      ],
     ],
     'required' => ['id', 'values', 'reason'],
   ],

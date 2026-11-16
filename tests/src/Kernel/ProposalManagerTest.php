@@ -27,12 +27,35 @@ final class ProposalManagerTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'field', 'text', 'filter', 'node', 'change_proposals'];
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'text',
+    'filter',
+    'node',
+    'change_proposals',
+  ];
 
+  /**
+   * The proposal manager.
+   *
+   * @var \Drupal\change_proposals\ProposalManager
+   */
   private ProposalManager $manager;
 
+  /**
+   * The account proposing changes (the "agent").
+   *
+   * @var \Drupal\user\UserInterface
+   */
   private UserInterface $agent;
 
+  /**
+   * The account approving or rejecting.
+   *
+   * @var \Drupal\user\UserInterface
+   */
   private UserInterface $reviewer;
 
   /**
@@ -72,7 +95,9 @@ final class ProposalManagerTest extends KernelTestBase {
   }
 
   /**
-   * Propose, inspect, approve: the node changes only on approval, as a reviewer-authored revision.
+   * Propose, inspect, approve: the node changes only on approval.
+   *
+   * The new revision is authored by the reviewer.
    */
   public function testProposeUpdateAndApprove(): void {
     $node = $this->article();
@@ -167,7 +192,9 @@ final class ProposalManagerTest extends KernelTestBase {
   }
 
   /**
-   * Field constraints run at proposal time, so the proposer gets the error, not the reviewer.
+   * Field constraints run at proposal time.
+   *
+   * The proposer gets the error, not the reviewer.
    */
   public function testInvalidValues(): void {
     $node = $this->article();
@@ -221,7 +248,9 @@ final class ProposalManagerTest extends KernelTestBase {
   }
 
   /**
-   * A creation proposal becomes a node on approval, owned by the proposer, revision by the reviewer.
+   * A creation proposal becomes a node on approval.
+   *
+   * The node is owned by the proposer; the revision is by the reviewer.
    */
   public function testCreate(): void {
     $proposal = $this->manager->propose('node', NULL, 'article', [

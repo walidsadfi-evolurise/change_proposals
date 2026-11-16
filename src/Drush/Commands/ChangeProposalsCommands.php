@@ -35,7 +35,14 @@ final class ChangeProposalsCommands extends DrushCommands {
   #[CLI\Command(name: 'change-proposals:list', aliases: ['cp-list'])]
   #[CLI\Option(name: 'status', description: 'pending (default), approved, rejected, failed, expired, all.')]
   #[CLI\Option(name: 'limit', description: 'Default 50.')]
-  #[CLI\FieldLabels(labels: ['id' => 'ID', 'status' => 'Status', 'summary' => 'Summary', 'owner' => 'Proposed by', 'source' => 'Source', 'created' => 'Created'])]
+  #[CLI\FieldLabels(labels: [
+    'id' => 'ID',
+    'status' => 'Status',
+    'summary' => 'Summary',
+    'owner' => 'Proposed by',
+    'source' => 'Source',
+    'created' => 'Created',
+  ])]
   #[CLI\DefaultTableFields(fields: ['id', 'status', 'summary', 'owner', 'source', 'created'])]
   #[CLI\Usage(name: 'drush cp-list', description: 'Pending proposals.')]
   #[CLI\Usage(name: 'drush cp-list --status=all --format=json', description: 'Everything, as JSON.')]
@@ -115,7 +122,11 @@ final class ChangeProposalsCommands extends DrushCommands {
         $this->logger()->success(dt('#@id applied to @label', ['@id' => $id, '@label' => $entity->label()]));
       }
       catch (ProposalException $e) {
-        $this->logger()->error(dt('#@id: @m @d', ['@id' => $id, '@m' => $e->getMessage(), '@d' => implode(' / ', $e->messages)]));
+        $this->logger()->error(dt('#@id: @m @d', [
+          '@id' => $id,
+          '@m' => $e->getMessage(),
+          '@d' => implode(' / ', $e->messages),
+        ]));
       }
     }
   }

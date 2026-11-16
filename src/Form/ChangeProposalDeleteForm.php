@@ -7,7 +7,9 @@ namespace Drupal\change_proposals\Form;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
 
 /**
- * Delete a proposal (administrators only; decisions are normally kept as audit trail).
+ * Deletes a proposal.
+ *
+ * Administrators only; decisions are normally kept as an audit trail.
  */
 final class ChangeProposalDeleteForm extends ContentEntityDeleteForm {
 

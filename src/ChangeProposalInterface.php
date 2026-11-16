@@ -30,7 +30,7 @@ interface ChangeProposalInterface extends ContentEntityInterface, EntityOwnerInt
   public function isPending(): bool;
 
   /**
-   * "update" or "create".
+   * The operation: "update" or "create".
    */
   public function getOperation(): string;
 

@@ -20,14 +20,39 @@ abstract class ProposalToolBase extends ToolPluginBase {
 
   protected const PERMISSION = 'propose changes through mcp';
 
+  /**
+   * The proposal manager.
+   *
+   * @var \Drupal\change_proposals\ProposalManager
+   */
   protected ProposalManager $manager;
 
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected EntityTypeManagerInterface $entityTypeManager;
 
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
   protected EntityFieldManagerInterface $fieldManager;
 
+  /**
+   * The bundle info service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
   protected EntityTypeBundleInfoInterface $bundleInfo;
 
+  /**
+   * The account the MCP session runs as.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
   protected AccountInterface $account;
 
   /**
@@ -57,7 +82,10 @@ abstract class ProposalToolBase extends ToolPluginBase {
     if ($this->account->hasPermission(static::PERMISSION)) {
       return NULL;
     }
-    return ['error' => 'forbidden', 'message' => sprintf('The account this MCP session runs as lacks the "%s" permission.', static::PERMISSION)];
+    return [
+      'error' => 'forbidden',
+      'message' => sprintf('The account this MCP session runs as lacks the "%s" permission.', static::PERMISSION),
+    ];
   }
 
   /**
@@ -101,6 +129,9 @@ abstract class ProposalToolBase extends ToolPluginBase {
     return is_scalar($v) ? trim((string) $v) : $default;
   }
 
+  /**
+   * Reads the "values" argument as an array, decoding a JSON string if needed.
+   */
   protected function values(array $args): array {
     $v = $args['values'] ?? [];
     if (is_string($v)) {

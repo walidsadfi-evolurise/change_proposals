@@ -10,7 +10,10 @@ namespace Drupal\change_proposals;
 class ProposalException extends \RuntimeException {
 
   /**
-   * Machine-readable code: not_allowed, not_found, blocked_fields, invalid, not_pending, expired.
+   * Machine-readable code.
+   *
+   * One of not_allowed, not_found, blocked_fields, invalid, not_pending or
+   * expired.
    */
   public readonly string $errorCode;
 

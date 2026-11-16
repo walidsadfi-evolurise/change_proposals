@@ -21,7 +21,11 @@ use Mcp\Server\ClientGateway;
     'properties' => [
       'entity_type' => ['type' => 'string', 'description' => 'Default "node".'],
       'bundle' => ['type' => 'string', 'description' => 'Content type machine name, e.g. "article".'],
-      'values' => ['type' => 'object', 'description' => 'field_name => value, including the required ones (title...).', 'additionalProperties' => TRUE],
+      'values' => [
+        'type' => 'object',
+        'description' => 'field_name => value, including the required ones (title...).',
+        'additionalProperties' => TRUE,
+      ],
       'reason' => ['type' => 'string'],
       'langcode' => ['type' => 'string'],
     ],

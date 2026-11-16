@@ -14,7 +14,7 @@ use Mcp\Server\ClientGateway;
 #[Tool(
   id: 'get_proposal',
   label: new TranslatableMarkup('Get a proposal'),
-  description: new TranslatableMarkup('Status and details of one proposal: pending, approved (with the resulting revision and URL), rejected (with the reviewer\'s note), failed or expired. Includes the current-vs-proposed diff.'),
+  description: new TranslatableMarkup("Status and details of one proposal: pending, approved (with the resulting revision and URL), rejected (with the reviewer's note), failed or expired. Includes the current-vs-proposed diff."),
   inputSchema: [
     'type' => 'object',
     'properties' => [

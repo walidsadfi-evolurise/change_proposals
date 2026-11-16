@@ -19,7 +19,10 @@ use Mcp\Server\ClientGateway;
     'type' => 'object',
     'properties' => [
       'entity_type' => ['type' => 'string', 'description' => 'Entity type id, default "node".'],
-      'bundle' => ['type' => 'string', 'description' => 'Bundle / content type machine name, e.g. "article". Omit to list the bundles.'],
+      'bundle' => [
+        'type' => 'string',
+        'description' => 'Bundle / content type machine name, e.g. "article". Omit to list the bundles.',
+      ],
     ],
   ],
   readOnly: TRUE,
@@ -39,18 +42,30 @@ final class DescribeContentType extends ProposalToolBase {
     $type = $this->str($arguments, 'entity_type', 'node');
     $allowed = $this->manager->allowedEntityTypes();
     if (!isset($allowed[$type])) {
-      return ['error' => 'not_allowed', 'message' => sprintf('"%s" does not accept proposals.', $type), 'entity_types' => array_keys($allowed)];
+      return [
+        'error' => 'not_allowed',
+        'message' => sprintf('"%s" does not accept proposals.', $type),
+        'entity_types' => array_keys($allowed),
+      ];
     }
     $bundles = $this->bundleInfo->getBundleInfo($type);
     $bundle = $this->str($arguments, 'bundle');
     if (!$bundle) {
       return [
         'entity_type' => $type,
-        'bundles' => array_map(static fn($id, $info) => ['id' => $id, 'label' => (string) $info['label']], array_keys($bundles), $bundles),
+        'bundles' => array_map(
+          static fn($id, $info) => ['id' => $id, 'label' => (string) $info['label']],
+          array_keys($bundles),
+          $bundles,
+        ),
       ];
     }
     if (!isset($bundles[$bundle])) {
-      return ['error' => 'not_found', 'message' => sprintf('No bundle "%s".', $bundle), 'bundles' => array_keys($bundles)];
+      return [
+        'error' => 'not_found',
+        'message' => sprintf('No bundle "%s".', $bundle),
+        'bundles' => array_keys($bundles),
+      ];
     }
     $blocked = $this->manager->blockedFields($type);
     $fields = [];

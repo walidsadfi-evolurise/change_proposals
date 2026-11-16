@@ -98,8 +98,8 @@ final class ReviewForm extends FormBase {
       $diff[] = [
         'data' => [
           ['data' => $row['label'], 'header' => TRUE],
-          ['data' => ['#type' => 'inline_template', '#template' => '<pre style="white-space:pre-wrap;margin:0">{{ v }}</pre>', '#context' => ['v' => $row['current']]]],
-          ['data' => ['#type' => 'inline_template', '#template' => '<pre style="white-space:pre-wrap;margin:0">{{ v }}</pre>', '#context' => ['v' => $row['proposed']]]],
+          ['data' => $this->preformatted($row['current'])],
+          ['data' => $this->preformatted($row['proposed'])],
         ],
         'class' => $row['changed'] ? ['color-warning'] : [],
       ];
@@ -142,10 +142,17 @@ final class ReviewForm extends FormBase {
     $proposal = $this->load($form_state);
     try {
       $entity = $this->manager->approve($proposal, $this->currentUser(), (string) $form_state->getValue('note'));
-      $this->messenger()->addStatus($this->t('Proposal #@id applied to %label.', ['@id' => $proposal->id(), '%label' => $entity->label()]));
+      $this->messenger()->addStatus($this->t('Proposal #@id applied to %label.', [
+        '@id' => $proposal->id(),
+        '%label' => $entity->label(),
+      ]));
     }
     catch (ProposalException $e) {
-      $this->messenger()->addError($this->t('Could not apply proposal #@id: @m @d', ['@id' => $proposal->id(), '@m' => $e->getMessage(), '@d' => implode(' / ', $e->messages)]));
+      $this->messenger()->addError($this->t('Could not apply proposal #@id: @m @d', [
+        '@id' => $proposal->id(),
+        '@m' => $e->getMessage(),
+        '@d' => implode(' / ', $e->messages),
+      ]));
     }
     $form_state->setRedirect('entity.change_proposal.collection');
   }
@@ -177,6 +184,17 @@ final class ReviewForm extends FormBase {
     /** @var \Drupal\change_proposals\ChangeProposalInterface $p */
     $p = $this->entityTypeManager->getStorage('change_proposal')->load($form_state->get('proposal_id'));
     return $p;
+  }
+
+  /**
+   * A value shown as preformatted, wrapped text in the diff table.
+   */
+  private function preformatted(string $value): array {
+    return [
+      '#type' => 'inline_template',
+      '#template' => '<pre style="white-space:pre-wrap;margin:0">{{ v }}</pre>',
+      '#context' => ['v' => $value],
+    ];
   }
 
 }
