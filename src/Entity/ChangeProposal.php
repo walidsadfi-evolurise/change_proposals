@@ -20,6 +20,40 @@ use Drupal\views\EntityViewsData;
 
 /**
  * A proposed change to a content entity.
+ *
+ * Drupal 11 reads the attribute below; Drupal 10, which has no entity type
+ * attributes, reads this equivalent annotation.
+ *
+ * @ContentEntityType(
+ *   id = "change_proposal",
+ *   label = @Translation("Change proposal"),
+ *   label_collection = @Translation("Change proposals"),
+ *   label_singular = @Translation("change proposal"),
+ *   label_plural = @Translation("change proposals"),
+ *   entity_keys = {
+ *     "id" = "id",
+ *     "uuid" = "uuid",
+ *     "label" = "summary",
+ *     "owner" = "uid",
+ *     "uid" = "uid",
+ *   },
+ *   handlers = {
+ *     "list_builder" = "Drupal\change_proposals\ChangeProposalListBuilder",
+ *     "access" = "Drupal\change_proposals\ChangeProposalAccessControlHandler",
+ *     "views_data" = "Drupal\views\EntityViewsData",
+ *     "form" = {
+ *       "delete" = "Drupal\change_proposals\Form\ChangeProposalDeleteForm",
+ *     },
+ *   },
+ *   links = {
+ *     "canonical" = "/admin/content/change-proposals/{change_proposal}",
+ *     "collection" = "/admin/content/change-proposals",
+ *     "delete-form" = "/admin/content/change-proposals/{change_proposal}/delete",
+ *   },
+ *   admin_permission = "administer change proposals",
+ *   base_table = "change_proposal",
+ *   internal = FALSE,
+ * )
  */
 #[ContentEntityType(
   id: 'change_proposal',
