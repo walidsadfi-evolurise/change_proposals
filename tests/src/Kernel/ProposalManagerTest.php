@@ -7,6 +7,8 @@ namespace Drupal\Tests\change_proposals\Kernel;
 use Drupal\change_proposals\ChangeProposalInterface;
 use Drupal\change_proposals\ProposalException;
 use Drupal\change_proposals\ProposalManager;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -14,12 +16,14 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Propose, validate, diff, approve, reject, expire against real nodes.
  *
  * @group change_proposals
  */
+#[RunTestsInSeparateProcesses]
 final class ProposalManagerTest extends KernelTestBase {
 
   use UserCreationTrait;
@@ -34,6 +38,7 @@ final class ProposalManagerTest extends KernelTestBase {
     'text',
     'filter',
     'node',
+    'options',
     'change_proposals',
   ];
 
@@ -70,7 +75,7 @@ final class ProposalManagerTest extends KernelTestBase {
     $this->installConfig(['filter', 'node', 'change_proposals']);
     FilterFormat::create(['format' => 'raw', 'name' => 'Raw'])->save();
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
-    node_add_body_field(NodeType::load('article'));
+    $this->addBodyField('article');
 
     // UserCreationTrait creates uid 1 first; make sure neither test user is it.
     $this->createUser();
@@ -358,6 +363,27 @@ final class ProposalManagerTest extends KernelTestBase {
     $storage = $this->container->get('entity_type.manager')->getStorage('change_proposal');
     $storage->resetCache([$p->id()]);
     return $storage->load($p->id());
+  }
+
+  /**
+   * Adds a "body" text field to node bundles.
+   *
+   * Replaces node_add_body_field(), deprecated in drupal:11.3.0.
+   */
+  private function addBodyField(string ...$bundles): void {
+    FieldStorageConfig::create([
+      'field_name' => 'body',
+      'entity_type' => 'node',
+      'type' => 'text_with_summary',
+    ])->save();
+    foreach ($bundles as $bundle) {
+      FieldConfig::create([
+        'field_name' => 'body',
+        'entity_type' => 'node',
+        'bundle' => $bundle,
+        'label' => 'Body',
+      ])->save();
+    }
   }
 
 }
